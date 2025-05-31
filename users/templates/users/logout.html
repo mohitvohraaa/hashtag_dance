@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Logged Out | Dance Studio{% endblock %}
+
+{% block extra_css %}
+.logout-container {
+    padding-top: 120px;
+    text-align: center;
+    min-height: 100vh;
+    background-color: #f9f9f9;
+}
+.logout-box {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    max-width: 400px;
+    margin: 0 auto;
+}
+.logout-message {
+    margin-bottom: 20px;
+    color: #333;
+}
+.back-to-home {
+    display: inline-block;
+    background-color: #ffc107;
+    color: black;
+    padding: 10px 25px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+.back-to-home:hover {
+    background-color: #ffca2c;
+    transform: scale(1.05);
+    color: black;
+}
+{% endblock %}
+
+{% block content %}
+<div class="logout-container">
+    <div class="logout-box">
+        <h2 class="logout-message">You have been successfully logged out</h2>
+        <p class="mb-4">Thank you for visiting Dance Studio!</p>
+        <a href="{% url 'home' %}" class="back-to-home">Back to Home</a>
+    </div>
+</div>
+{% endblock %} 

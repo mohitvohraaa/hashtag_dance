@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Events | Dance Studio{% endblock %}
+
+{% block extra_css %}
+.events-section {
+    padding: 120px 0 60px;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+.event-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 30px;
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+.event-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+.event-card .card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+.event-card .card-body {
+    padding: 1.5rem;
+}
+.event-date {
+    color: #ffc107;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+.section-title {
+    position: relative;
+    margin-bottom: 50px;
+    padding-bottom: 20px;
+}
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background-color: #ffc107;
+}
+.no-events {
+    text-align: center;
+    padding: 50px;
+    color: #6c757d;
+}
+.btn-primary {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #000;
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    margin-right: 10px;
+}
+.btn-primary:hover {
+    background-color: #ffca2c;
+    border-color: #ffca2c;
+    color: #000;
+    transform: scale(1.05);
+}
+.card-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+{% endblock %}
+
+{% block content %}
+<!-- Events Section -->
+<section class="events-section">
+    <div class="container">
+        <h1 class="text-center section-title">Upcoming Dance Events</h1>
+        {% if events %}
+            <div class="row">
+                {% for event in events %}
+                    <div class="col-md-4">
+                        <div class="card event-card">
+                            {% if event.image %}
+                                <img src="{{ event.image.url }}" class="card-img-top" alt="{{ event.title }}">
+                            {% else %}
+                                <img src="{% static 'events/images/default-event.jpg' %}" class="card-img-top" alt="Default Event Image">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ event.title }}</h5>
+                                <p class="event-date">{{ event.date|date:"F j, Y - g:i A" }}</p>
+                                <p class="card-text">{{ event.description|truncatewords:30 }}</p>
+                                <div class="card-buttons">
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#eventModal{{ event.id }}">
+                                        Learn More
+                                    </button>
+                                    <a href="{% url 'bookings:seat_selection' event.id %}" class="btn btn-primary">
+                                        Book Seats
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Event Modal -->
+                    <div class="modal fade" id="eventModal{{ event.id }}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">{{ event.title }}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    {% if event.image %}
+                                        <img src="{{ event.image.url }}" class="img-fluid mb-3" alt="{{ event.title }}">
+                                    {% endif %}
+                                    <p class="event-date">{{ event.date|date:"F j, Y - g:i A" }}</p>
+                                    <p>{{ event.description }}</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-events">
+                <h3>No events scheduled at the moment.</h3>
+                <p>Please check back later for upcoming events!</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Welcome | Dance Studio{% endblock %}
+
+{% block extra_css %}
+.hero-section {
+    height: 100vh;
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('{% static "events/images/dance-bg.jpg" %}') no-repeat center center;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    color: white;
+}
+.navbar {
+    background-color: rgba(0, 0, 0, 0.8) !important;
+    padding: 1rem 0;
+}
+.nav-link {
+    color: white !important;
+    font-weight: 500;
+    transition: color 0.3s ease;
+    margin: 0 10px;
+}
+.nav-link:hover {
+    color: #ffc107 !important;
+}
+.hero-content {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+}
+.hero-title {
+    font-size: 4rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+.hero-subtitle {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+.btn-custom {
+    background-color: #ffc107;
+    color: black;
+    padding: 12px 30px;
+    font-weight: 600;
+    border: none;
+    transition: all 0.3s ease;
+    margin: 0 10px;
+    text-decoration: none;
+}
+.btn-custom:hover {
+    background-color: #ffca2c;
+    transform: scale(1.05);
+    color: black;
+    text-decoration: none;
+}
+.btn-outline {
+    background-color: transparent;
+    border: 2px solid #ffc107;
+    color: #ffc107;
+}
+.btn-outline:hover {
+    background-color: #ffc107;
+    color: black;
+}
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <h1 class="hero-title">Move to the Rhythm</h1>
+            <p class="hero-subtitle">Join us for extraordinary dance experiences and unforgettable performances</p>
+            <div class="d-flex justify-content-center">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'events' %}" class="btn-custom">Explore Events</a>
+                {% else %}
+                    <a href="{% url 'signup' %}" class="btn-custom">Sign Up Now</a>
+                    <a href="{% url 'login' %}" class="btn-custom btn-outline">Login</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

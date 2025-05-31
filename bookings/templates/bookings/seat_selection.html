@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seat Selection</title>
+    <!-- Add Razorpay Script -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .seat-input-section {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .seat-input-section label {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-right: 15px;
+            color: #333;
+        }
+
+        .seat-input-section input {
+            padding: 10px 15px;
+            font-size: 1.1rem;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            width: 80px;
+            text-align: center;
+        }
+
+        .seat-input-section input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 2px solid #333;
+        }
+
+        .legend-available { background-color: #e9ecef; }
+        .legend-booked { background-color: #dc3545; }
+        .legend-selected { background-color: #28a745; }
+
+        .stage {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .stage-display {
+            background: linear-gradient(135deg, #6f42c1, #007bff);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            max-width: 400px;
+            margin: 0 auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .theater {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 30px;
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .row-label {
+            width: 30px;
+            text-align: center;
+            font-weight: bold;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .seats-group {
+            display: flex;
+            gap: 4px;
+        }
+
+        .aisle {
+            width: 20px;
+        }
+
+        .seat {
+            width: 35px;
+            height: 35px;
+            border: 2px solid #333;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .seat:hover:not(.booked):not(.disabled) {
+            transform: scale(1.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .seat.available {
+            background-color: #e9ecef;
+            border-color: #6c757d;
+            color: #495057;
+        }
+
+        .seat.booked {
+            background-color: #dc3545;
+            border-color: #c82333;
+            color: white;
+            cursor: not-allowed;
+        }
+
+        .seat.selected {
+            background-color: #28a745;
+            border-color: #1e7e34;
+            color: white;
+        }
+
+        .seat.disabled {
+            background-color: #f8f9fa;
+            border-color: #dee2e6;
+            color: #6c757d;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .selection-summary {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .summary-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .summary-header h3 {
+            font-size: 1.3rem;
+            color: #333;
+        }
+
+        .seat-counter {
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .selected-seats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .seat-badge {
+            background: #28a745;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .no-selection {
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-reset {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background: #5a6268;
+        }
+
+        .btn-reset:disabled {
+            background: #e9ecef;
+            color: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-confirm {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-confirm:hover {
+            background: #218838;
+        }
+
+        .btn-confirm:disabled {
+            background: #e9ecef;
+            color: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .legend {
+                gap: 15px;
+            }
+            
+            .seat {
+                width: 30px;
+                height: 30px;
+                font-size: 0.7rem;
+            }
+            
+            .row-label {
+                width: 25px;
+                font-size: 1rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% csrf_token %}
+    <div class="container">
+        <div class="header">
+            <h1>Select Your Seats</h1>
+            <p>Choose your preferred seats for {{ event.title }}</p>
+        </div>
+
+        <div class="content">
+            <!-- Seat Input Section -->
+            <div class="seat-input-section">
+                <label for="seatCount">Number of seats:</label>
+                <input type="number" id="seatCount" min="1" max="8" value="1">
+            </div>
+
+            <!-- Alert Messages -->
+            <div id="alertContainer"></div>
+
+            <!-- Legend -->
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color legend-available"></div>
+                    <span>Available</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color legend-booked"></div>
+                    <span>Booked</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color legend-selected"></div>
+                    <span>Selected</span>
+                </div>
+            </div>
+
+            <!-- Stage -->
+            <div class="stage">
+                <div class="stage-display"> STAGE </div>
+            </div>
+
+            <!-- Theater Seating -->
+            <div class="theater" id="theater"></div>
+
+            <!-- Selection Summary -->
+            <div class="selection-summary">
+                <div class="summary-header">
+                    <h3>Selection Summary</h3>
+                    <div class="seat-counter" id="seatCounter">0 / 1 seats selected</div>
+                </div>
+                <div id="selectedSeatsDisplay" class="no-selection">No seats selected</div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="btn btn-reset" id="resetBtn" disabled>
+                    ↻ Reset Selection
+                </button>
+                <button class="btn btn-confirm" id="confirmBtn" disabled>
+                    ✓ Confirm Selection
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class SeatSelection {
+            constructor() {
+                this.requiredSeats = 1;
+                this.selectedSeats = [];
+                this.eventId = {{ event.id }};
+                this.seats = this.generateSeats([]); // Initialize with empty booked seats
+                this.csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                console.log('Initialized with event ID:', this.eventId);
+                
+                this.initializeElements();
+                this.bindEvents();
+                this.renderTheater(); // Render initial empty matrix
+                this.updateUI();
+                this.loadBookedSeats(); // Then load booked seats
+            }
+
+            initializeElements() {
+                this.seatCountInput = document.getElementById('seatCount');
+                this.theater = document.getElementById('theater');
+                this.seatCounter = document.getElementById('seatCounter');
+                this.selectedSeatsDisplay = document.getElementById('selectedSeatsDisplay');
+                this.resetBtn = document.getElementById('resetBtn');
+                this.confirmBtn = document.getElementById('confirmBtn');
+                this.alertContainer = document.getElementById('alertContainer');
+            }
+
+            loadBookedSeats() {
+                console.log('Loading booked seats for event:', this.eventId);
+                fetch(`/bookings/api/event/${this.eventId}/booked-seats/`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Received booked seats:', data.booked_seats);
+                        this.seats = this.generateSeats(data.booked_seats || []);
+                        this.renderTheater();
+                        this.updateUI();
+                    })
+                    .catch(error => {
+                        console.error('Error loading booked seats:', error);
+                        this.showAlert('Error loading booked seats. Please refresh the page.', 'warning');
+                    });
+            }
+
+            generateSeats(bookedSeats) {
+                const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+                const seats = [];
+
+                rows.forEach(row => {
+                    for (let seatNum = 1; seatNum <= 12; seatNum++) {
+                        const seatId = `${row}${seatNum}`;
+                        seats.push({
+                            id: seatId,
+                            row: row,
+                            number: seatNum,
+                            status: bookedSeats.includes(seatId) ? 'booked' : 'available'
+                        });
+                    }
+                });
+
+                return seats;
+            }
+
+            bindEvents() {
+                this.seatCountInput.addEventListener('change', (e) => {
+                    this.handleSeatCountChange(parseInt(e.target.value) || 1);
+                });
+
+                this.resetBtn.addEventListener('click', () => {
+                    this.resetSelection();
+                });
+
+                this.confirmBtn.addEventListener('click', () => {
+                    this.confirmSelection();
+                });
+            }
+
+            handleSeatCountChange(newCount) {
+                this.requiredSeats = Math.max(1, Math.min(8, newCount));
+                this.seatCountInput.value = this.requiredSeats;
+
+                // Remove excess selected seats
+                if (this.selectedSeats.length > this.requiredSeats) {
+                    const excessSeats = this.selectedSeats.slice(this.requiredSeats);
+                    this.selectedSeats = this.selectedSeats.slice(0, this.requiredSeats);
+                    
+                    // Update seat status
+                    this.seats.forEach(seat => {
+                        if (excessSeats.includes(seat.id)) {
+                            seat.status = 'available';
+                        }
+                    });
+                }
+
+                this.updateSeatAvailability();
+                this.renderTheater();
+                this.updateUI();
+            }
+
+            updateSeatAvailability() {
+                // Disable available seats if we've reached the limit
+                const shouldDisable = this.selectedSeats.length >= this.requiredSeats;
+                
+                this.seats.forEach(seat => {
+                    if (seat.status === 'available') {
+                        seat.disabled = shouldDisable;
+                    } else {
+                        seat.disabled = false;
+                    }
+                });
+            }
+
+            handleSeatClick(seatId) {
+                const seat = this.seats.find(s => s.id === seatId);
+                if (!seat || seat.status === 'booked') return;
+
+                if (seat.status === 'selected') {
+                    // Deselect seat
+                    seat.status = 'available';
+                    this.selectedSeats = this.selectedSeats.filter(id => id !== seatId);
+                    console.log('Seat deselected:', seatId, 'Current selection:', this.selectedSeats);
+                    this.showAlert('Seat ' + seatId + ' deselected', 'success');
+                } else if (seat.status === 'available' && this.selectedSeats.length < this.requiredSeats) {
+                    // Select seat
+                    seat.status = 'selected';
+                    this.selectedSeats.push(seatId);
+                    console.log('Seat selected:', seatId, 'Current selection:', this.selectedSeats);
+                    this.showAlert('Seat ' + seatId + ' selected', 'success');
+                } else if (this.selectedSeats.length >= this.requiredSeats) {
+                    this.showAlert('You can only select ' + this.requiredSeats + ' seat(s). Deselect a seat first.', 'warning');
+                    return;
+                }
+
+                this.updateSeatAvailability();
+                this.renderTheater();
+                this.updateUI();
+            }
+
+            renderTheater() {
+                const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+                this.theater.innerHTML = '';
+
+                rows.forEach(rowLetter => {
+                    const rowDiv = document.createElement('div');
+                    rowDiv.className = 'row';
+
+                    // Left row label
+                    const leftLabel = document.createElement('div');
+                    leftLabel.className = 'row-label';
+                    leftLabel.textContent = rowLetter;
+                    rowDiv.appendChild(leftLabel);
+
+                    // Seats 1-6
+                    const leftSeats = document.createElement('div');
+                    leftSeats.className = 'seats-group';
+                    for (let i = 1; i <= 6; i++) {
+                        const seat = this.createSeatElement(rowLetter, i);
+                        leftSeats.appendChild(seat);
+                    }
+                    rowDiv.appendChild(leftSeats);
+
+                    // Aisle
+                    const aisle = document.createElement('div');
+                    aisle.className = 'aisle';
+                    rowDiv.appendChild(aisle);
+
+                    // Seats 7-12
+                    const rightSeats = document.createElement('div');
+                    rightSeats.className = 'seats-group';
+                    for (let i = 7; i <= 12; i++) {
+                        const seat = this.createSeatElement(rowLetter, i);
+                        rightSeats.appendChild(seat);
+                    }
+                    rowDiv.appendChild(rightSeats);
+
+                    // Right row label
+                    const rightLabel = document.createElement('div');
+                    rightLabel.className = 'row-label';
+                    rightLabel.textContent = rowLetter;
+                    rowDiv.appendChild(rightLabel);
+
+                    this.theater.appendChild(rowDiv);
+                });
+            }
+
+            createSeatElement(row, number) {
+                const seatId = `${row}${number}`;
+                const seatData = this.seats.find(s => s.id === seatId);
+                
+                const seatElement = document.createElement('div');
+                seatElement.className = `seat ${seatData.status}`;
+                seatElement.textContent = number;
+                seatElement.title = `Seat ${seatId} - ${seatData.status}`;
+
+                if (seatData.disabled && seatData.status === 'available') {
+                    seatElement.classList.add('disabled');
+                }
+
+                if (seatData.status !== 'booked' && !seatData.disabled) {
+                    seatElement.addEventListener('click', () => {
+                        this.handleSeatClick(seatId);
+                    });
+                }
+
+                return seatElement;
+            }
+
+            updateUI() {
+                // Update seat counter
+                this.seatCounter.textContent = `${this.selectedSeats.length} / ${this.requiredSeats} seats selected`;
+
+                // Update selected seats display
+                if (this.selectedSeats.length > 0) {
+                    this.selectedSeatsDisplay.innerHTML = '';
+                    this.selectedSeatsDisplay.className = 'selected-seats';
+                    
+                    this.selectedSeats.forEach(seatId => {
+                        const badge = document.createElement('div');
+                        badge.className = 'seat-badge';
+                        badge.textContent = `✓ ${seatId}`;
+                        this.selectedSeatsDisplay.appendChild(badge);
+                    });
+                } else {
+                    this.selectedSeatsDisplay.textContent = 'No seats selected';
+                    this.selectedSeatsDisplay.className = 'no-selection';
+                }
+
+                // Update button states
+                this.resetBtn.disabled = this.selectedSeats.length === 0;
+                this.confirmBtn.disabled = this.selectedSeats.length !== this.requiredSeats;
+            }
+
+            resetSelection() {
+                this.selectedSeats = [];
+                this.seats.forEach(seat => {
+                    if (seat.status === 'selected') {
+                        seat.status = 'available';
+                    }
+                    seat.disabled = false;
+                });
+                
+                this.renderTheater();
+                this.updateUI();
+                this.showAlert('Selection reset successfully', 'success');
+            }
+
+            confirmSelection() {
+                if (this.selectedSeats.length === this.requiredSeats) {
+                    console.log('Starting payment flow for seats:', this.selectedSeats);
+                    
+                    // Step 1: Create Order
+                    fetch(`/bookings/api/event/${this.eventId}/create-order/`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': this.csrfToken
+                        },
+                        body: JSON.stringify({
+                            selected_seats: this.selectedSeats
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(orderData => {
+                        if (orderData.error) {
+                            throw new Error(orderData.error);
+                        }
+                        // Step 2: Configure Razorpay
+                        console.log('Creating Razorpay order with data:', orderData);
+                        const options = {
+                            key: "{{ razorpay_key_id }}",
+                            amount: orderData.amount,
+                            currency: "INR",
+                            name: "Dance Studio",
+                            description: `Booking ${this.selectedSeats.length} seats`,
+                            order_id: orderData.order_id,
+                            handler: (response) => {
+                                console.log('Payment successful, response:', response);
+                                const verificationData = {
+                                    razorpay_payment_id: response.razorpay_payment_id,
+                                    razorpay_order_id: response.razorpay_order_id,
+                                    razorpay_signature: response.razorpay_signature
+                                };
+                                console.log('Sending verification data:', verificationData);
+                                
+                                fetch(`/bookings/api/event/${this.eventId}/verify-payment/`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRFToken': this.csrfToken
+                                    },
+                                    body: JSON.stringify(verificationData)
+                                })
+                                .then(response => {
+                                    console.log('Raw verification response:', response);
+                                    if (!response.ok) {
+                                        throw new Error('Payment verification failed');
+                                    }
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    console.log('Verification data:', data);
+                                    if (data.success) {
+                                        this.showAlert('Payment successful! Booking confirmed.', 'success');
+                                        console.log('Redirecting to:', data.redirect_url);
+                                        window.location.href = '/bookings/email-sent/';
+                                    } else {
+                                        throw new Error(data.error || 'Payment verification failed');
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Payment verification error:', error);
+                                    this.showAlert('Payment verification failed. Please contact support.', 'warning');
+                                });
+                            },
+                            prefill: {
+                                name: orderData.user_name,
+                                email: orderData.user_email
+                            },
+                            theme: {
+                                color: "#3399cc"
+                            }
+                        };
+
+                        // Step 3: Open Razorpay payment modal
+                        const rzp = new Razorpay(options);
+                        rzp.open();
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        this.showAlert(error.message || 'An error occurred. Please try again.', 'warning');
+                    });
+                }
+            }
+
+            showAlert(message, type) {
+                this.alertContainer.innerHTML = '';
+                
+                const alert = document.createElement('div');
+                alert.className = `alert alert-${type}`;
+                alert.textContent = message;
+                
+                this.alertContainer.appendChild(alert);
+                
+                setTimeout(() => {
+                    alert.remove();
+                }, 3000);
+            }
+        }
+
+        // Initialize the seat selection when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new SeatSelection();
+        });
+    </script>
+</body>
+</html> 
