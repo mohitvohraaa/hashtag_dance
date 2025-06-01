@@ -12,10 +12,20 @@ services:
       - key: DEBUG
         value: False
       - key: RAZORPAY_KEY_ID
-        sync: false
+        value: rzp_test_2N1oPDeXAasxeu
       - key: RAZORPAY_KEY_SECRET
-        sync: false
+        value: xw3DOBHmGrGiOO9ApCIi3fUO
+
       - key: EMAIL_HOST_USER
-        sync: false
+        value: mohitvohracr50@gmail.com
       - key: EMAIL_HOST_PASSWORD
-        sync: false 
+        value: askj anfo apcw cogl
+      - key: DEFAULT_FROM_EMAIL
+        value: mohitvohracr50@gmail.com
+
+      - key: CLOUDINARY_CLOUD_NAME
+        value: dvo7ornoe
+      - key: CLOUDINARY_API_KEY
+        value: 842254918228243
+      - key: CLOUDINARY_API_SECRET
+        value: 2tACmxRTKddFv1I80Hc8BnzfjKk
