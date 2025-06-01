@@ -166,10 +166,10 @@ def verify_payment(request, event_id):
                 send_mail(
                     subject,
                     '',
+                    settings.EMAIL_HOST_USER,
                     [booking.user.email],
-                    html_message=message,
                     fail_silently=False,
-                    from_email=settings.EMAIL_HOST_USER,
+                    html_message=message,
                 )
                 print("Email sent successfully")
             except Exception as email_error:
