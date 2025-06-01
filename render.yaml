@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: hashtag-dance
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn hashtag_dance.wsgi:application
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.0
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: False
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: EMAIL_HOST_USER
+        sync: false
+      - key: EMAIL_HOST_PASSWORD
+        sync: false 
