@@ -30,7 +30,7 @@ staticfiles/
 
 # Virtual Environment
 venv/
-ENV/
+.env
 
 # IDE
 .idea/
