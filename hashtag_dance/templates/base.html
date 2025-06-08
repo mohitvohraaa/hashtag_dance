@@ -9,70 +9,153 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .navbar {
-            background-color: rgba(0, 0, 0, 0.8) !important;
-            padding: 1rem 0;
+            background-color: rgba(0, 0, 0, 0.85) !important;
+            padding: 1rem 0.8rem;
+            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.05);
+            font-family: 'Poppins', sans-serif;
         }
+    
         .nav-link {
-            color: white !important;
+            color: #eee !important;
             font-weight: 500;
+            margin: 0 12px;
+            position: relative;
             transition: color 0.3s ease;
-            margin: 0 10px;
         }
-        .nav-link:hover {
-            color: #ffc107 !important;
+    
+        .nav-link:hover,
+        .nav-link.active {
+            color: #fff !important;
         }
+    
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0%;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: white;
+            transition: width 0.3s ease;
+        }
+    
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+    
         .auth-buttons .btn {
             margin-left: 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            padding: 6px 16px;
             transition: all 0.3s ease;
         }
+    
         .btn-login {
             background-color: transparent;
-            border: 2px solid #ffc107;
-            color: #ffc107;
+            border: 2px solid #fff;
+            color: #fff;
         }
+    
         .btn-login:hover {
-            background-color: #ffc107;
-            color: black;
-        }
-        .btn-signup {
-            background-color: #ffc107;
-            border: 2px solid #ffc107;
-            color: black;
-        }
-        .btn-signup:hover {
-            background-color: #ffca2c;
-            border-color: #ffca2c;
+            background-color: #fff;
+            color: #000;
             transform: scale(1.05);
         }
+    
+        .btn-signup {
+            background-color: #fff;
+            border: 2px solid #fff;
+            color: #000;
+        }
+    
+        .btn-signup:hover {
+            background-color: #f0f0f0;
+            border-color: #f0f0f0;
+            transform: scale(1.05);
+        }
+    
         .logout-form {
             display: inline;
         }
+    
         .logout-form button {
-            background: none;
-            border: 2px solid #ffc107;
-            color: #ffc107;
-            padding: 6px 12px;
-            border-radius: 4px;
+            background: transparent;
+            border: 2px solid #fff;
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 20px;
             cursor: pointer;
+            font-size: 0.85rem;
             transition: all 0.3s ease;
         }
+    
         .logout-form button:hover {
-            background-color: #ffc107;
-            color: black;
+            background-color: #fff;
+            color: #000;
+            transform: scale(1.05);
         }
+    
+        .welcome-text {
+            color: #ccc;
+            font-size: 0.9rem;
+            margin-right: 10px;
+        }
+    
+        .navbar-toggler {
+            border: none;
+        }
+    
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='white' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+        }
+        .shiny-text {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: linear-gradient(120deg, #ccc, #fff, #aaa);
+            background-size: 200% auto;
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            position: relative;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.4),
+                         0 0 10px rgba(255, 255, 255, 0.3),
+                         0 0 15px rgba(255, 255, 255, 0.2);
+            animation: shine 3s linear infinite;
+            transition: transform 0.3s ease;
+        }
+        
+        .shiny-text:hover {
+            transform: scale(1.05);
+        }
+        
+        @keyframes shine {
+            0% {
+                background-position: -200% center;
+            }
+            100% {
+                background-position: 200% center;
+            }
+        }
+        
+    
         {% block extra_css %}{% endblock %}
     </style>
+    
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <nav class="navbar navbar-expand-lg fixed-top custom-navbar">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'home' %}">Dance Studio</a>
+            <a class="navbar-brand shiny-text" href="{% url 'home' %}">#HashTag Dance</a>
+
+
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
                         <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">Home</a>
                     </li>
@@ -80,21 +163,22 @@
                         <a class="nav-link {% if request.resolver_match.url_name == 'events' %}active{% endif %}" href="{% url 'events' %}">Events</a>
                     </li>
                 </ul>
-                <div class="auth-buttons">
+                <div class="auth-buttons d-flex align-items-center">
                     {% if user.is_authenticated %}
-                        <span class="text-white me-3">Welcome, {{ user.username }}!</span>
-                        <form method="post" action="{% url 'logout' %}" class="logout-form">
+                        <span class="welcome-text me-3">Welcome, {{ user.username }}!</span>
+                        <form method="post" action="{% url 'logout' %}" class="logout-form d-inline">
                             {% csrf_token %}
-                            <button type="submit">Logout</button>
+                            <button type="submit" class="btn btn-outline-light btn-sm logout-btn">Logout</button>
                         </form>
                     {% else %}
-                        <a href="{% url 'login' %}" class="btn btn-login">Login</a>
-                        <a href="{% url 'signup' %}" class="btn btn-signup">Sign Up</a>
+                        <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm me-2 auth-link">Login</a>
+                        <a href="{% url 'signup' %}" class="btn btn-light btn-sm auth-link">Sign Up</a>
                     {% endif %}
                 </div>
             </div>
         </div>
     </nav>
+    
 
     {% block content %}{% endblock %}
 

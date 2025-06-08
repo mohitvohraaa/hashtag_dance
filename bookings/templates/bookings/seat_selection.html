@@ -1,3 +1,5 @@
+{% include 'components/loader.html' %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -673,6 +675,7 @@
             confirmSelection() {
                 if (this.selectedSeats.length === this.requiredSeats) {
                     console.log('Starting payment flow for seats:', this.selectedSeats);
+                    showLoader();
                     
                     // Step 1: Create Order
                     fetch(`/bookings/api/event/${this.eventId}/create-order/`, {
@@ -690,6 +693,7 @@
                         if (orderData.error) {
                             throw new Error(orderData.error);
                         }
+                        hideLoader();
                         // Step 2: Configure Razorpay
                         console.log('Creating Razorpay order with data:', orderData);
                         const options = {
@@ -707,6 +711,7 @@
                                     razorpay_signature: response.razorpay_signature
                                 };
                                 console.log('Sending verification data:', verificationData);
+                                showLoader();
                                 
                                 fetch(`/bookings/api/event/${this.eventId}/verify-payment/`, {
                                     method: 'POST',
@@ -718,6 +723,7 @@
                                 })
                                 .then(response => {
                                     console.log('Raw verification response:', response);
+                                    hideLoader();
                                     if (!response.ok) {
                                         throw new Error('Payment verification failed');
                                     }

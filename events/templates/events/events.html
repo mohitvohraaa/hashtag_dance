@@ -98,7 +98,8 @@
                                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#eventModal{{ event.id }}">
                                         Learn More
                                     </button>
-                                    <a href="{% url 'bookings:seat_selection' event.id %}" class="btn btn-primary">
+                                    
+                                    <a href="{% url 'bookings:seat_selection' event.id %}" class="btn btn-primary book-seats-btn">
                                         Book Seats
                                     </a>
                                 </div>
@@ -137,4 +138,31 @@
         {% endif %}
     </div>
 </section>
+{% include 'components/loader.html' %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const loader = document.getElementById('loader-overlay');
+      const links = document.querySelectorAll('.book-seats-btn');
+  
+      links.forEach(link => {
+        link.addEventListener('click', function (e) {
+          loader.style.display = 'flex';  // Show loader immediately
+        });
+      });
+    });
+  </script>
+  <script>
+    window.addEventListener('pageshow', function (event) {
+      // Always hide loader on any page load (forward/backward)
+      const loader = document.getElementById('loader-overlay');
+      if (loader) {
+        loader.style.display = 'none';
+      }
+    });
+  </script>
+  
+  
+  
+
 {% endblock %}
+  

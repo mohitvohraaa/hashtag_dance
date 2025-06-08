@@ -1,3 +1,4 @@
+{% include 'components/loader.html' %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -55,7 +56,29 @@
             <p>A confirmation email has been sent to your registered email address.</p>
             <p>Please check your inbox for the booking details.</p>
         </div>
-        <a href="/" class="home-button">Return to Home</a>
+        <a href="/" class="home-button book-seats-btn">Return to Home</a>
     </div>
 </body>
 </html>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const loader = document.getElementById('loader-overlay');
+      const links = document.querySelectorAll('.book-seats-btn');
+  
+      links.forEach(link => {
+        link.addEventListener('click', function (e) {
+          loader.style.display = 'flex';  // Show loader immediately
+        });
+      });
+    });
+  </script>
+  <script>
+    window.addEventListener('pageshow', function (event) {
+      // Always hide loader on any page load (forward/backward)
+      const loader = document.getElementById('loader-overlay');
+      if (loader) {
+        loader.style.display = 'none';
+      }
+    });
+  </script>

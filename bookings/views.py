@@ -185,6 +185,7 @@ def verify_payment(request, event_id):
             
         except Exception as e:
             print(f"Payment verification failed: {str(e)}")
+            #booking.filter(payment_status='PENDING').delete()
             booking.payment_status = 'FAILED'
             booking.save()
             
