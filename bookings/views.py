@@ -14,10 +14,7 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from utils.seat_lock import are_seats_locked,lock_seats,unlock_seats,fetch_locked_seats
 from utils.redis import redis_client
-import qrcode 
-from io import BytesIO
-from django.core.mail import EmailMultiAlternatives
-from django.core.files.base import ContentFile
+
 logger = logging.getLogger(__name__)
 
 client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
