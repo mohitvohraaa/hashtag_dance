@@ -6,7 +6,8 @@
 {% block extra_css %}
 .hero-section {
     height: 100vh;
-    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('{% static "events/images/dance-bg.jpg" %}') no-repeat center center;
+    {% comment %} background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('{% static "events/images/dance-bg.jpg" %}') no-repeat center center; {% endcomment %}
+    background:linear-gradient(45deg,#000000,#ff007f);
     background-size: cover;
     display: flex;
     align-items: center;
@@ -23,7 +24,7 @@
     margin: 0 10px;
 }
 .nav-link:hover {
-    color: #ffc107 !important;
+    color:rgb(140, 41, 123) !important;
 }
 .hero-content {
     text-align: center;
@@ -31,6 +32,7 @@
     margin: 0 auto;
 }
 .hero-title {
+    font-family: "Outfit", sans-serif;
     font-size: 4rem;
     font-weight: bold;
     margin-bottom: 1.5rem;
@@ -42,8 +44,8 @@
     text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
 }
 .btn-custom {
-    background-color: #ffc107;
-    color: black;
+    background-color:black;
+    color: white;
     padding: 12px 30px;
     font-weight: 600;
     border: none;
@@ -52,18 +54,18 @@
     text-decoration: none;
 }
 .btn-custom:hover {
-    background-color: #ffca2c;
+    background-color:white;
     transform: scale(1.05);
     color: black;
     text-decoration: none;
 }
 .btn-outline {
-    background-color: transparent;
-    border: 2px solid #ffc107;
-    color: #ffc107;
+    background-color: black;
+    border: 2px solid rgba(0,0,0,0);
+    color:white;
 }
 .btn-outline:hover {
-    background-color: #ffc107;
+    background-color:white;
     color: black;
 }
 {% endblock %}
@@ -73,8 +75,8 @@
 <section class="hero-section">
     <div class="container">
         <div class="hero-content">
-            <h1 class="hero-title">Move to the Rhythm</h1>
-            <p class="hero-subtitle">Join us for extraordinary dance experiences and unforgettable performances</p>
+            <h1 class="hero-title">GRID'25 IS HERE!</h1>
+            <p class="hero-subtitle">A Showcase of Art in Motion.</p>
             <div class="d-flex justify-content-center">
                 {% if user.is_authenticated %}
                     <a href="{% url 'events' %}" class="btn-custom book-seats-btn">Explore Events</a>

@@ -36,7 +36,7 @@ ALLOWED_HOSTS = ['*']  # Update this with your domain in production
 # Application definition
 
 INSTALLED_APPS = [
-    'unfold',
+    'unfold', 
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -189,3 +189,7 @@ if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000  # 1 year
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
+
+#redis settings
+REDIS_URL="rediss://default:AWlzAAIjcDE1NGM1MTE2NGM5MzQ0MzYwYmQzYmIzZjZlZjdjYjZhMXAxMA@adequate-mink-26995.upstash.io:6379"
+REDIS_LOCK_DURATION=300
