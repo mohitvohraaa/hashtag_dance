@@ -105,7 +105,7 @@ DATABASES = {
         'USER': 'postgres',
         'PASSWORD': 'wRZfromtoHBTbCeAGldaUawmDvXgyqVk',
         'HOST': 'yamanote.proxy.rlwy.net',
-        'PORT': '20780',
+        'PORT': '5432',
     }
 }
 
